@@ -1,0 +1,33 @@
+{
+  "title": "Discover Energy LYNK Cloud",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to LYNK Cloud",
+        "description": "Enter the credentials used at mylynkcloud.com.",
+        "data": {"username": "Email or username", "password": "Password", "host": "Cloud server"}
+      },
+      "reauth_confirm": {
+        "title": "Reconnect to LYNK Cloud",
+        "description": "Enter the current password for {username}.",
+        "data": {"password": "Password"}
+      }
+    },
+    "error": {"cannot_connect": "Unable to connect to LYNK Cloud", "invalid_auth": "Invalid username or password"},
+    "abort": {"already_configured": "This LYNK Cloud account is already configured"}
+  },
+  "entity": {
+    "sensor": {
+      "state_of_charge": {"name": "State of charge"}, "power": {"name": "Power"},
+      "battery_count": {"name": "Battery count"}, "alarm_count": {"name": "Alarm count"},
+      "lifetime_charge": {"name": "Lifetime charge"}, "lifetime_discharge": {"name": "Lifetime discharge"},
+      "terminal_voltage": {"name": "Terminal voltage"}, "current": {"name": "Current"},
+      "battery_temperature": {"name": "Battery temperature"}, "bms_temperature": {"name": "BMS temperature"},
+      "cell_average_voltage": {"name": "Cell average voltage"}, "cell_minimum_voltage": {"name": "Cell minimum voltage"},
+      "cell_maximum_voltage": {"name": "Cell maximum voltage"}, "cell_spread": {"name": "Cell spread"},
+      "installed_capacity": {"name": "Installed capacity"}
+    },
+    "binary_sensor": {"fault_or_warning": {"name": "Fault or warning"}}
+  }
+}
+

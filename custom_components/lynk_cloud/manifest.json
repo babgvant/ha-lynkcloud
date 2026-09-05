@@ -1,0 +1,12 @@
+{
+  "domain": "lynk_cloud",
+  "name": "Discover Energy LYNK Cloud",
+  "codeowners": ["@babgvant"],
+  "config_flow": true,
+  "documentation": "https://github.com/babgvant/ha-lynkcloud",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/babgvant/ha-lynkcloud/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
