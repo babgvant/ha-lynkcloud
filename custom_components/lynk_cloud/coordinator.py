@@ -15,22 +15,9 @@ from homeassistant.util import dt as dt_util
 
 from .api import LynkCloudApi, LynkCloudAuthError, LynkCloudError
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
+from .discovery import lynk_node_id, lynk_nodes
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def _lynk_nodes(nodes: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Flatten the portal tree and retain nodes addressable by ulId."""
-    found: list[dict[str, Any]] = []
-    for node in nodes:
-        ul_id = node.get("ulId")
-        if ul_id is not None:
-            found.append(node)
-        children = node.get("children")
-        if isinstance(children, list):
-            found.extend(_lynk_nodes(children))
-    # Some responses repeat nodes in multiple tree branches.
-    return list({str(node["ulId"]): node for node in found}.values())
 
 
 class LynkCloudCoordinator(DataUpdateCoordinator[dict[str, Any]]):
@@ -48,7 +35,9 @@ class LynkCloudCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            nodes = _lynk_nodes(await self.api.async_get_tree())
+            nodes = lynk_nodes(await self.api.async_get_tree())
+            if not nodes:
+                raise UpdateFailed("No LYNK controllers were found for this account")
             results = await asyncio.gather(
                 *(self._async_device_data(node) for node in nodes)
             )
@@ -59,7 +48,9 @@ class LynkCloudCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise UpdateFailed(str(err)) from err
 
     async def _async_device_data(self, node: dict[str, Any]) -> dict[str, Any]:
-        ul_id = str(node["ulId"])
+        ul_id = lynk_node_id(node)
+        if ul_id is None:
+            raise UpdateFailed("LYNK controller is missing its telemetry identifier")
         day_start = dt_util.start_of_local_day()
         begin_time = int(day_start.timestamp() * 1000)
         end_time = int((day_start + timedelta(days=1)).timestamp() * 1000) - 1
